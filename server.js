@@ -15,13 +15,9 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
+const allowedOrigins = process.env.CORS_ORIGINS.split(",");
 app.use(cors({
-    origin: [
-        "http://localhost:5173", // auth
-        "http://localhost:5174", // candidate
-        "http://localhost:5175", // hr
-        "http://localhost:5176", // admin
-    ],
+    origin: allowedOrigins,
     credentials: true,
 }));
 
