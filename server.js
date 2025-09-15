@@ -16,7 +16,13 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(cors({
-    credentials: true
+    origin: [
+        "http://localhost:5173", // auth
+        "http://localhost:5174", // candidate
+        "http://localhost:5175", // hr
+        "http://localhost:5176", // admin
+    ],
+    credentials: true,
 }));
 
 // Routes
