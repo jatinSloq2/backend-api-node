@@ -7,19 +7,39 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
+    // Check if user exists
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: "User already exists" });
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
+    // Create user
+    const user = await User.create({
       name,
       email,
       password: hashedPassword,
       role
     });
 
-    res.status(201).json({ message: "User registered successfully" });
+    // Generate token
+    const token = generateToken(user._id, user.role);
+
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    // Determine redirect URL based on role
+    let redirectUrl = "https://auth.jatinsinghdev.tech/";
+    if (user.role === "candidate") redirectUrl = "https://candidate.jatinsinghdev.tech/dashboard";
+    if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech/dashboard";
+    if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech/dashboard";
+
+    res.status(201).json({ message: "User registered successfully", redirectUrl });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -41,10 +61,11 @@ const loginUser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax", // allow cross-subdomain in prod
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
-    let redirectUrl = "https://auth.jatinsinghdev.tech/"; // fallback
+    let redirectUrl = "https://auth.jatinsinghdev.tech/";
     if (user.role === "candidate") redirectUrl = "https://candidate.jatinsinghdev.tech/dashboard";
     if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech/dashboard";
     if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech/dashboard";
