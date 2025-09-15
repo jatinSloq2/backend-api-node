@@ -45,9 +45,9 @@ const loginUser = async (req, res) => {
     });
 
     let redirectUrl = "https://auth.jatinsinghdev.tech/"; // fallback
-    if (user.role === "candidate") redirectUrl = "http://localhost:5174/dashboard";
-    if (user.role === "hr") redirectUrl = "http://localhost:5175/dashboard";
-    if (user.role === "admin") redirectUrl = "http://localhost:5176/dashboard";
+    if (user.role === "candidate") redirectUrl = "https://candidate.jatinsinghdev.tech/dashboard";
+    if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech/dashboard";
+    if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech/dashboard";
 
     res.json({ message: "Login successful", redirectUrl });
   } catch (err) {
