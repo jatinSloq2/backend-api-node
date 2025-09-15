@@ -25,13 +25,13 @@ const registerUser = async (req, res) => {
     // Generate token
     const token = generateToken(user._id, user.role);
 
-    // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "lax",
+      sameSite: "none",
       domain: ".jatinsinghdev.tech",
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/"
     });
 
     // Determine redirect URL based on role
@@ -40,7 +40,17 @@ const registerUser = async (req, res) => {
     if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech";
     if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech";
 
-    res.status(201).json({ message: "User registered successfully", redirectUrl });
+    res.status(201).json({
+      message: "User registered successfully",
+      redirectUrl,
+      // Include user info for immediate use
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -62,9 +72,10 @@ const loginUser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
-      sameSite: "lax",
+      sameSite: "none",
       domain: ".jatinsinghdev.tech",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/"
     });
 
     let redirectUrl = "https://auth.jatinsinghdev.tech/";
@@ -72,7 +83,16 @@ const loginUser = async (req, res) => {
     if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech";
     if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech";
 
-    res.json({ message: "Login successful", redirectUrl });
+    res.json({
+      message: "Login successful",
+      redirectUrl,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -80,7 +100,14 @@ const loginUser = async (req, res) => {
 
 // Logout
 const logoutUser = (req, res) => {
-  res.clearCookie("token");
+  // Clear cookie with production settings
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    domain: ".jatinsinghdev.tech",
+    path: "/"
+  });
   res.json({ message: "Logged out successfully" });
 };
 
