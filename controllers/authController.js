@@ -35,9 +35,9 @@ const registerUser = async (req, res) => {
 
     // Determine redirect URL based on role
     let redirectUrl = "https://auth.jatinsinghdev.tech/";
-    if (user.role === "candidate") redirectUrl = "https://candidate.jatinsinghdev.tech/dashboard";
-    if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech/dashboard";
-    if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech/dashboard";
+    if (user.role === "candidate") redirectUrl = "https://candidate.jatinsinghdev.tech";
+    if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech";
+    if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech";
 
     res.status(201).json({ message: "User registered successfully", redirectUrl });
   } catch (err) {
@@ -66,9 +66,9 @@ const loginUser = async (req, res) => {
     });
 
     let redirectUrl = "https://auth.jatinsinghdev.tech/";
-    if (user.role === "candidate") redirectUrl = "https://candidate.jatinsinghdev.tech/dashboard";
-    if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech/dashboard";
-    if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech/dashboard";
+    if (user.role === "candidate") redirectUrl = "https://candidate.jatinsinghdev.tech";
+    if (user.role === "hr") redirectUrl = "https://hr.jatinsinghdev.tech";
+    if (user.role === "admin") redirectUrl = "https://admin.jatinsinghdev.tech";
 
     res.json({ message: "Login successful", redirectUrl });
   } catch (err) {
